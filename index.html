@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi 3D Sistem Kristal Kubik</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Upper Section: Controls + Canvas -->
+        <div class="upper-section">
+            <!-- Panel Kontrol -->
+            <div class="control-panel">
+                <h2>🧬 Kontrol Simulasi</h2>
+                <label>
+                    Struktur Kristal:
+                    <select id="structureSelect">
+                        <option value="sc">Simple Cubic (SC)</option>
+                        <option value="bcc">Body-Centered Cubic (BCC)</option>
+                        <option value="fcc">Face-Centered Cubic (FCC)</option>
+                    </select>
+                </label>
+                <label class="checkbox">
+                    <input type="checkbox" id="showEdges" checked> Tampilkan Garis Kubus
+                </label>
+                <label class="checkbox">
+                    <input type="checkbox" id="showLabels" checked> Koordinat Atom
+                </label>
+                <label class="checkbox">
+                    <input type="checkbox" id="autoRotate"> Rotasi Otomatis
+                </label>
+                <button id="resetView">Reset View</button>
+            </div>
+
+            <!-- Canvas 3D -->
+            <div id="container3d">
+                <div class="loading">Loading 3D Scene...</div>
+            </div>
+        </div>
+
+        <!-- Panel Informasi - Now below -->
+        <div class="info-panel">
+            <h2>💎 Sistem Kristal Kubik</h2>
+            <p><strong>Definisi:</strong> Sistem kristal kubik memiliki panjang sisi yang sama (a = b = c) dan sudut antar sumbu α = β = γ = 90°.</p>
+            <div class="structure-info">
+                <h3>Struktur Saat Ini:</h3>
+                <div id="currentInfo"></div>
+            </div>
+            <ul>
+                <li><strong>SC:</strong> Atom di 8 sudut kubus</li>
+                <li><strong>BCC:</strong> Atom di 8 sudut + 1 atom di tengah</li>
+                <li><strong>FCC:</strong> Atom di 8 sudut + atom di 6 sisi</li>
+            </ul>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
