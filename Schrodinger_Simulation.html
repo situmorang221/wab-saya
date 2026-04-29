@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title>Simulasi Schrödinger 1D</title>
+
+<style>
+
+* {
+box-sizing: border-box;
+}
+
+body{
+font-family: 'Segoe UI', Arial, sans-serif;
+background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+min-height: 100vh;
+margin: 0;
+color: #333;
+}
+
+header{
+background: linear-gradient(90deg, #0f3460, #1a1a2e);
+color: white;
+padding: 20px;
+font-size: 24px;
+text-align: center;
+box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.container{
+display: flex;
+justify-content: center;
+gap: 25px;
+margin-top: 20px;
+flex-wrap: wrap;
+padding: 0 15px;
+}
+
+.canvas-column {
+display: flex;
+flex-direction: column;
+gap: 10px;
+}
+
+.canvas-container {
+display: flex;
+flex-direction: column;
+align-items: center;
+}
+
+.canvas-label {
+color: #e94560;
+font-weight: bold;
+font-size: 13px;
+text-transform: uppercase;
+letter-spacing: 1px;
+margin-bottom: 5px;
+}
+
+canvas{
+background: linear-gradient(to bottom, #0a0a1a, #1a1a2e);
+border: 2px solid #e94560;
+border-radius: 8px;
+box-shadow: 0 0 20px rgba(233, 69, 96, 0.3);
+}
+
+.panel{
+background: linear-gradient(145deg, #1a1a2e, #0f3460);
+padding: 20px;
+border-radius: 15px;
+box-shadow: 0px 8px 25px rgba(0,0,0,0.4);
+width: 280px;
+text-align: left;
+color: white;
+border: 1px solid #e94560;
+}
+
+.panel h3 {
+color: #e94560;
+margin-top: 0;
+text-align: center;
+border-bottom: 1px solid #e94560;
+padding-bottom: 10px;
+font-size: 18px;
+}
+
+.slider-container {
+margin: 12px 0;
+}
+
+.slider-container label {
+display: block;
+margin-bottom: 5px;
+color: #a0a0a0;
+font-size: 13px;
+}
+
+.slider-container .value {
+color: #e94560;
+float: right;
+font-weight: bold;
+}
+
+.slider{
+width: 100%;
+height: 8px;
+border-radius: 5px;
+background: #0a0a1a;
+outline: none;
+-webkit-appearance: none;
+}
+
+.slider::-webkit-slider-thumb {
+-webkit-appearance: none;
+width: 18px;
+height: 18px;
+border-radius: 50%;
+background: #e94560;
+cursor: pointer;
+box-shadow: 0 0 10px rgba(233, 69, 96, 0.5);
+}
+
+.slider::-moz-range-thumb {
+width: 18px;
+height: 18px;
+border-radius: 50%;
+background: #e94560;
+cursor: pointer;
+border: none;
+}
+
+.button-group {
+display: flex;
+flex-direction: column;
+gap: 8px;
+margin-top: 15px;
+}
+
+button{
+padding: 10px 15px;
+border: none;
+background: linear-gradient(90deg, #e94560, #0f3460);
+color: white;
+border-radius: 8px;
+cursor: pointer;
+font-size: 13px;
+transition: all 0.3s ease;
+text-transform: uppercase;
+letter-spacing: 1px;
+font-weight: bold;
+}
+
+button:hover{
+transform: translateY(-2px);
+box-shadow: 0 5px 15px rgba(233, 69, 96, 0.4);
+}
+
+button.active {
+background: linear-gradient(90deg, #00d9ff, #e94560);
+}
+
+.control-buttons {
+display: flex;
+gap: 8px;
+margin-top: 12px;
+}
+
+.control-buttons button {
+flex: 1;
+font-size: 12px;
+padding: 8px 10px;
+}
+
+.graph-buttons {
+display: flex;
+flex-wrap: wrap;
+gap: 5px;
+margin-top: 12px;
+}
+
+.graph-buttons button {
+flex: 1 1 45%;
+font-size: 11px;
+padding: 8px;
+}
+
+.legend{
+margin-top: 15px;
+padding-top: 12px;
+border-top: 1px solid #a0a0a0;
+}
+
+.legend-title {
+color: #a0a0a0;
+font-size: 11px;
+text-transform: uppercase;
+letter-spacing: 1px;
+margin-bottom: 8px;
+}
+
+.legend span{
+display: inline-block;
+width: 18px;
+height: 12px;
+margin-right: 5px;
+vertical-align: middle;
+border-radius: 3px;
+}
+
+.legend-item {
+margin: 4px 0;
+font-size: 12px;
+color: #a0a0a0;
+}
+
+.description{
+max-width: 1100px;
+margin: 20px auto;
+background: linear-gradient(145deg, #1a1a2e, #0f3460);
+padding: 18px;
+border-radius: 12px;
+box-shadow: 0px 5px 20px rgba(0,0,0,0.3);
+text-align: left;
+color: white;
+border: 1px solid #e94560;
+}
+
+.description b {
+color: #e94560;
+}
+
+.formula {
+background: rgba(0,0,0,0.3);
+padding: 8px 12px;
+border-radius: 5px;
+margin: 8px 0;
+font-family: 'Times New Roman', serif;
+font-size: 16px;
+color: #00d9ff;
+}
+
+.info {
+font-size: 12px;
+color: #a0a0a0;
+line-height: 1.5;
+margin-top: 8px;
+}
+
+.tab-container {
+display: flex;
+gap: 5px;
+margin-bottom: 8px;
+}
+
+.tab-btn {
+flex: 1;
+padding: 8px;
+font-size: 11px;
+border-radius: 5px 5px 0 0;
+}
+
+.tab-btn.active-tab {
+background: #e94560;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+⚛️ Simulasi Superposisi Persamaan Schrödinger 1 Dimensi
+</header>
+
+<div class="container">
+
+<div class="canvas-column">
+    <div class="canvas-container">
+        <div class="canvas-label">Fungsi Gelombang ψ(x,t) - Bagian Real</div>
+        <canvas id="waveReal" width="500" height="180"></canvas>
+    </div>
+    <div class="canvas-container">
+        <div class="canvas-label">Fungsi Gelombang ψ(x,t) - Bagian Imajiner</div>
+        <canvas id="waveImag" width="500" height="180"></canvas>
+    </div>
+    <div class="canvas-container">
+        <div class="canvas-label">Densitas Probabilitas |ψ(x,t)|²</div>
+        <canvas id="prob" width="500" height="180"></canvas>
+    </div>
+    <div class="canvas-container">
+        <div class="canvas-label">Fase Gelombang arg(ψ)</div>
+        <canvas id="phase" width="500" height="150"></canvas>
+    </div>
+</div>
+
+<div class="panel">
+
+<h3>Kontrol Simulasi</h3>
+
+<div class="slider-container">
+<label>Amplitudo (A) <span class="value" id="A-value">1.0</span></label>
+<input type="range" id="A" class="slider" min="0.5" max="3" step="0.1" value="1">
+</div>
+
+<div class="slider-container">
+<label>Bilangan Gelombang (k) <span class="value" id="k-value">2.0</span></label>
+<input type="range" id="k" class="slider" min="0.5" max="8" step="0.1" value="2">
+</div>
+
+<div class="slider-container">
+<label>Frekuensi Angular (ω) <span class="value" id="omega-value">1.0</span></label>
+<input type="range" id="omega" class="slider" min="0.1" max="3" step="0.1" value="1">
+</div>
+
+<div class="slider-container">
+<label>Kecepatan Animasi <span class="value" id="speed-value">1.0</span></label>
+<input type="range" id="speed" class="slider" min="0.1" max="3" step="0.1" value="1">
+</div>
+
+<div class="button-group">
+<button id="btn-right" onclick="setMode('right')">ψ(x,t)=Ae^i(kx−ωt)</button>
+<button id="btn-left" onclick="setMode('left')">ψ(x,t)=Ae^i(kx+ωt)</button>
+<button id="btn-super" onclick="setMode('super')">2A·cos(kx)·e^i(ωt) Superposisi</button>
+</div>
+
+<div class="control-buttons">
+<button id="btn-pause" onclick="togglePause()">⏸️ Pause</button>
+<button onclick="resetSimulation()">🔄 Reset</button>
+</div>
+
+<div class="graph-buttons">
+<button id="btn-wave" class="active" onclick="setGraph('wave')">📈 ψ(x,t)</button>
+<button id="btn-prob" onclick="setGraph('prob')">📊 |ψ|²</button>
+<button id="btn-phase" onclick="setGraph('phase')">🔄 Fase</button>
+<button id="btn-energy" onclick="setGraph('energy')">⚡ Energi</button>
+</div>
+
+<div class="legend">
+<div class="legend-title">Keterangan Warna</div>
+<div class="legend-item">
+<span style="background: #00d9ff;"></span> Bagian Real ψ
+</div>
+<div class="legend-item">
+<span style="background: #ff6b6b;"></span> Bagian Imajiner ψ
+</div>
+<div class="legend-item">
+<span style="background: #e94560;"></span> Superposisi
+</div>
+<div class="legend-item">
+<span style="background: #00ff88;"></span> Densitas Probabilitas
+</div>
+<div class="legend-item">
+<span style="background: #ffd700;"></span> Fase Gelombang
+</div>
+</div>
+
+</div>
+
+</div>
+
+<div class="description" id="desc">
+
+<b>Penjelasan:</b><br>
+Pilih mode simulasi untuk melihat perilaku gelombang kuantum. Gunakan slider untuk mengubah parameter gelombang.
+
+</div>
+
+<script>
+
+// Canvas setup
+let waveRealCanvas = document.getElementById("waveReal")
+let waveRealCtx = waveRealCanvas.getContext("2d")
+
+let waveImagCanvas = document.getElementById("waveImag")
+let waveImagCtx = waveImagCanvas.getContext("2d")
+
+let probCanvas = document.getElementById("prob")
+let probCtx = probCanvas.getContext("2d")
+
+let phaseCanvas = document.getElementById("phase")
+let phaseCtx = phaseCanvas.getContext("2d")
+
+// Simulation state
+let mode = "right"
+let t = 0
+let isPaused = false
+let speed = 1
+let omega = 1
+
+// Particle system
+let particles = []
+const MAX_PARTICLES = 300
+
+// Slider elements
+let sliderA = document.getElementById("A")
+let sliderK = document.getElementById("k")
+let sliderOmega = document.getElementById("omega")
+let sliderSpeed = document.getElementById("speed")
+
+// Update slider value displays
+sliderA.addEventListener("input", function() {
+    document.getElementById("A-value").textContent = parseFloat(this.value).toFixed(1)
+})
+
+sliderK.addEventListener("input", function() {
+    document.getElementById("k-value").textContent = parseFloat(this.value).toFixed(1)
+})
+
+sliderOmega.addEventListener("input", function() {
+    omega = parseFloat(this.value)
+    document.getElementById("omega-value").textContent = omega.toFixed(1)
+})
+
+sliderSpeed.addEventListener("input", function() {
+    speed = parseFloat(this.value)
+    document.getElementById("speed-value").textContent = speed.toFixed(1)
+})
+
+// Toggle pause
+function togglePause() {
+    isPaused = !isPaused
+    document.getElementById("btn-pause").textContent = isPaused ? "▶️ Play" : "⏸️ Pause"
+}
+
+// Reset simulation
+function resetSimulation() {
+    t = 0
+    particles = []
+    setMode(mode)
+}
+
+// Set graph mode
+function setGraph(g) {
+    document.querySelectorAll(".graph-buttons button").forEach(btn => btn.classList.remove("active"))
+    document.getElementById("btn-" + g).classList.add("active")
+    
+    // Show/hide canvases based on selection
+    waveRealCanvas.style.display = (g === 'wave') ? 'block' : 'none'
+    waveImagCanvas.style.display = (g === 'wave') ? 'block' : 'none'
+    probCanvas.style.display = (g === 'prob' || g === 'energy') ? 'block' : 'none'
+    phaseCanvas.style.display = (g === 'phase') ? 'block' : 'none'
+    
+    if (g === 'energy') {
+        drawEnergyDiagram()
+        document.getElementById("desc").innerHTML = `
+            <b>Diagram Energi Partikel Bebas</b><br>
+            <div class="formula">E = ℏ²k² / 2m = ${( (parseFloat(sliderK.value)**2 / 2).toFixed(2) )}</div>
+            <div class="info">
+            • Garis merah tebal: Level energi kinetik E (konstan, bergantung bil. gelombang k)<br>
+            • Garis biru putus-putus: Potensial V(x) = 0 (partikel bebas)<br>
+            • Energi konstan sepanjang x, gelombang plane bebas bergerak<br>
+            • Ubah slider "Bilangan Gelombang (k)" untuk lihat perubahan E secara real-time
+            </div>
+        `
+    }
+}
+
+// Spawn particles based on probability density
+function spawnParticles(A, k) {
+    if (particles.length >= MAX_PARTICLES) return
+    
+    let numToSpawn = Math.min(8, MAX_PARTICLES - particles.length)
+    
+    for (let i = 0; i < numToSpawn; i++) {
+        let x = Math.random() * 500
+        let X = (x - 250) / 70
+        
+        let right = A * Math.cos(k * X - omega * t)
+        let left = A * Math.cos(k * X + omega * t)
+        
+        let psi
+        if (mode == "right") psi = right
+        else if (mode == "left") psi = left
+        else psi = 2 * A * Math.cos(k * X) // |ψ| for standing wave
+        
+        let prob = psi * psi
+        
+        if (Math.random() < prob * 0.25) {
+            let maxProb = (mode == "super") ? 4 * A * A : A * A
+            let normalizedProb = prob / maxProb
+            
+            particles.push({
+                x: x,
+                y: 150 - normalizedProb * 130,
+                vx: (Math.random() - 0.5) * 1.5,
+                vy: (Math.random() - 0.5) * 1.5,
+                life: 60 + Math.random() * 30,
+                maxLife: 90
+            })
+        }
+    }
+}
+
+// Draw particles
+function drawParticles() {
+    for (let i = particles.length - 1; i >= 0; i--) {
+        let p = particles[i]
+        
+        let alpha = p.life / p.maxLife
+        probCtx.fillStyle = `rgba(0, 255, 136, ${alpha})`
+        probCtx.beginPath()
+        probCtx.arc(p.x, p.y, 2.5, 0, Math.PI * 2)
+        probCtx.fill()
+        
+        probCtx.shadowColor = "#00ff88"
+        probCtx.shadowBlur = 8
+        probCtx.fill()
+        probCtx.shadowBlur = 0
+        
+        p.x += p.vx * speed
+        p.y += p.vy * speed
+        p.life -= speed
+        
+        if (p.x < 0) p.x = 500
+        if (p.x > 500) p.x = 0
+        if (p.y < 15) p.y = 15
+        if (p.y > 165) p.y = 165
+        
+        if (p.life <= 0) {
+            particles.splice(i, 1)
+        }
+    }
+}
+
+// Set mode
+function setMode(m) {
+    mode = m
+    
+    document.querySelectorAll(".button-group button").forEach(btn => btn.classList.remove("active"))
+    document.getElementById("btn-" + m).classList.add("active")
+    
+    let text = ""
+    
+    if (m == "right") {
+text = `
+            <b>Gelombang Berjalan ke Kanan</b><br>
+            <div class="formula">ψ(x,t) = A e<sup>i(kx−ωt)</sup></div>
+            <div class="info">
+            Re(ψ) = A cos(kx−ωt) | Im(ψ) = A sin(kx−ωt)<br>
+            Bergerak ke +x, v = ω/k
+            </div>
+        `
+    } else if (m == "left") {
+text = `
+            <b>Gelombang Berjalan ke Kiri</b><br>
+            <div class="formula">ψ(x,t) = A e<sup>i(kx+ωt)</sup></div>
+            <div class="info">
+            Re(ψ) = A cos(kx+ωt) | Im(ψ) = A sin(kx+ωt)<br>
+            Bergerak ke -x, v = -ω/k
+            </div>
+        `
+    } else {
+text = `
+            <b>Superposisi - Gelombang Berdiri</b><br>
+            <div class="formula">ψ<sub>right</sub> + ψ<sub>left</sub> = ψ(x,t) = 2A·cos(kx)·e<sup>iωt</sup></div>
+            <div class="formula">Ae<sup>i(kx-ωt)</sup> + Ae<sup>i(kx+ωt)</sup> = 2A cos(kx) e<sup>iωt</sup></div>
+            <div class="info">
+            Superposisi gelombang kanan + kiri menghasilkan gelombang berdiri.<br>
+            <b>NODE:</b> |ψ|²=0 (simpul) | <b>ANTINODE:</b> |ψ|² maks (perut)
+            </div>
+        `
+
+    }
+    
+    document.getElementById("desc").innerHTML = text
+}
+
+// Draw axis
+function drawAxis(ctx, w, h, color = "#00ff88") {
+    ctx.strokeStyle = color
+    ctx.lineWidth = 2
+    
+    // Main axes
+    ctx.beginPath()
+    ctx.moveTo(0, h/2)
+    ctx.lineTo(w, h/2)
+    ctx.stroke()
+    
+    ctx.beginPath()
+    ctx.moveTo(w/2, 0)
+    ctx.lineTo(w/2, h)
+    ctx.stroke()
+    
+    // Bright grid
+    ctx.strokeStyle = "#55ffaa"
+    ctx.lineWidth = 1
+    ctx.setLineDash([2, 4])
+    
+    for (let i = 0; i < w; i += 50) {
+        ctx.beginPath()
+        ctx.moveTo(i, 0)
+        ctx.lineTo(i, h)
+        ctx.stroke()
+    }
+    for (let i = 0; i < h; i += 30) {
+        ctx.beginPath()
+        ctx.moveTo(0, i)
+        ctx.lineTo(w, i)
+        ctx.stroke()
+    }
+    ctx.setLineDash([])
+}
+
+// Draw wave function
+function drawWaveFunction() {
+    let A = parseFloat(sliderA.value)
+    let k = parseFloat(sliderK.value)
+    
+    // Clear canvases
+    waveRealCtx.clearRect(0, 0, 500, 180)
+    waveImagCtx.clearRect(0, 0, 500, 180)
+    
+    // Draw axis
+    drawAxis(waveRealCtx, 500, 180, "#222")
+    drawAxis(waveImagCtx, 500, 180, "#222")
+    
+    // Draw real part
+    waveRealCtx.lineWidth = 2.5
+    waveRealCtx.beginPath()
+    
+    for (let x = 0; x < 500; x++) {
+        let X = (x - 250) / 70
+        
+        let real, imag
+        
+        if (mode == "right") {
+            real = A * Math.cos(k * X - omega * t)
+            imag = A * Math.sin(k * X - omega * t)
+        } else if (mode == "left") {
+            real = A * Math.cos(k * X + omega * t)
+            imag = A * Math.sin(k * X + omega * t)
+        } else {
+            // Standing wave: 2A cos(kX) e^(i ω t)
+            let spatial = 2 * A * Math.cos(k * X)
+            real = spatial * Math.cos(omega * t)
+            imag = spatial * Math.sin(omega * t)
+        }
+        
+        let Y = 90 - real * 25
+        
+        if (x == 0) waveRealCtx.moveTo(x, Y)
+        else waveRealCtx.lineTo(x, Y)
+    }
+    
+    waveRealCtx.strokeStyle = "#00d9ff"
+    waveRealCtx.stroke()
+    waveRealCtx.shadowColor = "#00d9ff"
+    waveRealCtx.shadowBlur = 15
+    waveRealCtx.stroke()
+    waveRealCtx.shadowBlur = 0
+    
+    // Draw imaginary part
+    waveImagCtx.lineWidth = 2.5
+    waveImagCtx.beginPath()
+    
+    for (let x = 0; x < 500; x++) {
+        let X = (x - 250) / 70
+        
+        let real, imag
+        
+        if (mode == "right") {
+            real = A * Math.cos(k * X - omega * t)
+            imag = A * Math.sin(k * X - omega * t)
+        } else if (mode == "left") {
+            real = A * Math.cos(k * X + omega * t)
+            imag = A * Math.sin(k * X + omega * t)
+        } else {
+            // Standing wave: 2A cos(kX) e^(i ω t)
+            let spatial = 2 * A * Math.cos(k * X)
+            real = spatial * Math.cos(omega * t)
+            imag = spatial * Math.sin(omega * t)
+        }
+        
+        let Y = 90 - imag * 25
+        
+        if (x == 0) waveImagCtx.moveTo(x, Y)
+        else waveImagCtx.lineTo(x, Y)
+    }
+    
+    waveImagCtx.strokeStyle = "#ff6b6b"
+    waveImagCtx.stroke()
+    waveImagCtx.shadowColor = "#ff6b6b"
+    waveImagCtx.shadowBlur = 15
+    waveImagCtx.stroke()
+    waveImagCtx.shadowBlur = 0
+}
+
+// Draw probability density
+function drawProbability() {
+    let A = parseFloat(sliderA.value)
+    let k = parseFloat(sliderK.value)
+    
+    probCtx.clearRect(0, 0, 500, 180)
+    drawAxis(probCtx, 500, 180, "#222")
+    
+    probCtx.lineWidth = 2.5
+    probCtx.beginPath()
+    
+    for (let x = 0; x < 500; x++) {
+        let X = (x - 250) / 70
+        
+        let psi
+        
+        if (mode == "right") {
+            psi = A * Math.cos(k * X - omega * t)
+        } else if (mode == "left") {
+            psi = A * Math.cos(k * X + omega * t)
+        } else {
+            // Standing wave |ψ|^2 = [2A cos(kX)]^2
+            psi = 2 * A * Math.cos(k * X)
+        }
+        
+        let prob = psi * psi
+        let Y = 150 - prob * 12
+        
+        if (x == 0) probCtx.moveTo(x, Y)
+        else probCtx.lineTo(x, Y)
+    }
+    
+    probCtx.strokeStyle = "#00ff88"
+    probCtx.stroke()
+    probCtx.shadowColor = "#00ff88"
+    probCtx.shadowBlur = 18
+    probCtx.stroke()
+    probCtx.shadowBlur = 0
+    
+    // Fill under curve
+    probCtx.lineTo(500, 150)
+    probCtx.lineTo(0, 150)
+    probCtx.closePath()
+    probCtx.fillStyle = "rgba(0, 255, 136, 0.1)"
+    probCtx.fill()
+    
+    // Draw nodes for superposition
+    if (mode == "super") {
+        for (let x = 0; x < 500; x++) {
+            let X = (x - 250) / 70
+            let psi = 2 * A * Math.cos(k * X)
+            
+            if (Math.abs(psi) < 0.1) {
+                probCtx.fillStyle = "#ffffff"
+                probCtx.beginPath()
+                probCtx.arc(x, 150, 3, 0, Math.PI * 2)
+                probCtx.fill()
+            }
+        }
+    }
+}
+
+// Draw phase
+function drawPhase() {
+    let A = parseFloat(sliderA.value)
+    let k = parseFloat(sliderK.value)
+    
+    phaseCtx.clearRect(0, 0, 500, 150)
+    drawAxis(phaseCtx, 500, 150, "#222")
+    
+    phaseCtx.lineWidth = 2
+    phaseCtx.beginPath()
+    
+    for (let x = 0; x < 500; x++) {
+        let X = (x - 250) / 70
+        
+        let real, imag
+        
+        if (mode == "right") {
+            real = A * Math.cos(k * X - omega * t)
+            imag = A * Math.sin(k * X - omega * t)
+        } else if (mode == "left") {
+            real = A * Math.cos(k * X + omega * t)
+            imag = A * Math.sin(k * X + omega * t)
+        } else {
+            let right = A * Math.cos(k * X - omega * t)
+            let left = A * Math.cos(k * X + omega * t)
+            real = right + left
+            
+            let rightI = A * Math.sin(k * X - omega * t)
+            let leftI = A * Math.sin(k * X + omega * t)
+            imag = rightI + leftI
+        }
+        
+        // Phase = arctan(Im/Re)
+        let phase = Math.atan2(imag, real)
+        let Y = 75 - phase * 20
+        
+        if (x == 0) phaseCtx.moveTo(x, Y)
+        else phaseCtx.lineTo(x, Y)
+    }
+    
+    phaseCtx.strokeStyle = "#ffd700"
+    phaseCtx.stroke()
+    phaseCtx.shadowColor = "#ffd700"
+    phaseCtx.shadowBlur = 15
+    phaseCtx.stroke()
+    phaseCtx.shadowBlur = 0
+}
+
+// Draw energy diagram
+function drawEnergyDiagram() {
+    let A = parseFloat(sliderA.value)
+    let k = parseFloat(sliderK.value)
+    
+    probCanvas.width = 500
+    probCanvas.height = 180
+    
+    probCtx.clearRect(0, 0, 500, 180)
+    
+    // Draw energy levels
+    let E = (k * k) / 2 // Kinetic energy for free particle (dalam satuan ℏ=1, m=1)
+    let V = 0 // Potential energy (partikel bebas)
+    
+    // Background
+    probCtx.fillStyle = "#0a0a1a"
+    probCtx.fillRect(0, 0, 500, 180)
+    
+    // Energy axis - bright
+    probCtx.strokeStyle = "#00ff88"
+    probCtx.lineWidth = 2
+    probCtx.beginPath()
+    probCtx.moveTo(50, 20)
+    probCtx.lineTo(50, 160)
+    probCtx.lineTo(480, 160)
+    probCtx.stroke()
+    
+    // Labels sumbu
+    probCtx.fillStyle = "#aaa"
+    probCtx.font = "bold 14px Arial"
+    probCtx.fillText("Energi (E)", 5, 18)
+    probCtx.save()
+    probCtx.translate(40, 90)
+    probCtx.rotate(-Math.PI/2)
+    probCtx.fillText("Posisi (x)", 0, 0)
+    probCtx.restore()
+    
+    // Grid for energy
+    probCtx.strokeStyle = "#444"
+    probCtx.lineWidth = 1
+    probCtx.setLineDash([2, 4])
+    for (let i = 50; i < 480; i += 50) {
+        probCtx.beginPath()
+        probCtx.moveTo(i, 20)
+        probCtx.lineTo(i, 160)
+        probCtx.stroke()
+    }
+    for (let i = 20; i < 160; i += 25) {
+        probCtx.beginPath()
+        probCtx.moveTo(50, i)
+        probCtx.lineTo(480, i)
+        probCtx.stroke()
+    }
+    probCtx.setLineDash([])
+    
+    // Garis potensial V=0
+    probCtx.strokeStyle = "#00d9ff"
+    probCtx.lineWidth = 2
+    probCtx.setLineDash([4, 4])
+    probCtx.beginPath()
+    probCtx.moveTo(50, 150)
+    probCtx.lineTo(480, 150)
+    probCtx.stroke()
+    probCtx.setLineDash([])
+    probCtx.fillStyle = "#00d9ff"
+    probCtx.font = "12px Arial"
+    probCtx.fillText("V(x) = 0", 55, 148)
+    
+    // Energy level line E = k²/2m
+    let E_y = 160 - E * 30
+    E_y = Math.max(30, Math.min(150, E_y))
+    
+    probCtx.strokeStyle = "#e94560"
+    probCtx.lineWidth = 4
+    probCtx.lineCap = "round"
+    probCtx.beginPath()
+    probCtx.moveTo(50, E_y)
+    probCtx.lineTo(480, E_y)
+    probCtx.stroke()
+    
+    // Labels energi
+    probCtx.fillStyle = "#e94560"
+    probCtx.font = "bold 16px Arial"
+    probCtx.fillText(`E = ${(E).toFixed(2)}`, 200, E_y - 15)
+    probCtx.font = "14px Arial"
+    probCtx.fillText("ℏ²k² / 2m", 280, E_y - 15)
+    
+}
+
+// Main draw function
+function draw() {
+    let currentGraph = document.querySelector(".graph-buttons button.active").id.replace("btn-", "")
+    
+    if (currentGraph === 'energy') {
+        drawEnergyDiagram()
+    } else {
+        if (currentGraph === 'wave' || currentGraph === 'prob' || currentGraph === 'phase') {
+            drawWaveFunction()
+            drawProbability()
+            drawPhase()
+            
+            // Show/hide based on selection
+            waveRealCanvas.style.display = (currentGraph === 'wave') ? 'block' : 'none'
+            waveImagCanvas.style.display = (currentGraph === 'wave') ? 'block' : 'none'
+            probCanvas.style.display = (currentGraph === 'prob' || currentGraph === 'energy') ? 'block' : 'none'
+            phaseCanvas.style.display = (currentGraph === 'phase') ? 'block' : 'none'
+            
+            if (!isPaused) {
+                spawnParticles(parseFloat(sliderA.value), parseFloat(sliderK.value))
+            }
+            drawParticles()
+        }
+    }
+    
+    if (!isPaused) {
+        t += 0.05 * speed
+    }
+    
+    requestAnimationFrame(draw)
+}
+
+// Initialize
+setMode("right")
+draw()
+
+</script>
+
+</body>
+
+</html>
+
